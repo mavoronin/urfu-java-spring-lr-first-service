@@ -3,7 +3,9 @@ package mvoronin.lr.test_rest_service.controller;
 import lombok.extern.slf4j.Slf4j;
 import mvoronin.lr.test_rest_service.model.Request;
 import mvoronin.lr.test_rest_service.model.Response;
+import mvoronin.lr.test_rest_service.service.ModifyRequestService;
 import mvoronin.lr.test_rest_service.service.MyModifyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyController {
 
     private final MyModifyService myModifyService;
+    private final ModifyRequestService modifyRequestService;
 
-    public MyController(@Qualifier("ModifyErrorMessage") MyModifyService myModifyService) {
+    @Autowired
+    public MyController(@Qualifier("ModifyUid") MyModifyService myModifyService,
+                        ModifyRequestService modifyRequestService) {
         this.myModifyService = myModifyService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -34,6 +40,8 @@ public class MyController {
                 .errorCode("")
                 .errorMessage("")
                 .build();
+
+        modifyRequestService.modifyRequest(request);
 
         Response responseAfterModify = myModifyService.modify(response);
 
